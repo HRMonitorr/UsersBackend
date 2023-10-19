@@ -55,29 +55,20 @@ func Login(Privatekey, MongoEnv, dbname, Colname string, r *http.Request) string
 func GetDataUserForAdmin(PublicKey, MongoEnv, dbname, colname string, r *http.Request) string {
 	req := new(pasproj.ResponseDataUser)
 	conn := pasproj.MongoCreateConnection(MongoEnv, dbname)
-	cihuy := new(pasproj.Response)
 	tokenlogin := r.Header.Get("Login")
-
 	if tokenlogin == "" {
 		req.Status = false
 		req.Message = "Header Login Not Found"
-	}
-
-	cekadmin := IsAdmin(tokenlogin, PublicKey)
-	if cekadmin != true {
-		req.Status = false
-		req.Message = "IHHH Kamu bukan admin"
-	}
-
-	err := json.NewDecoder(r.Body).Decode(&cihuy)
-	if err != nil {
-		req.Status = false
-		req.Message = "error parsing application/json: " + err.Error()
 	} else {
-		checktoken, err := pasproj.DecodeGetUser(os.Getenv(PublicKey), cihuy.Token)
+		cekadmin := IsAdmin(tokenlogin, PublicKey)
+		if cekadmin != true {
+			req.Status = false
+			req.Message = "IHHH Kamu bukan admin"
+		}
+		checktoken, err := pasproj.DecodeGetUser(os.Getenv(PublicKey), tokenlogin)
 		if err != nil {
 			req.Status = false
-			req.Message = "tidak ada data username : " + cihuy.Token
+			req.Message = "tidak ada data username : " + tokenlogin
 		}
 		compared := pasproj.CompareUsername(conn, colname, checktoken)
 		if compared != true {
