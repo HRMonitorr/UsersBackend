@@ -2,7 +2,7 @@ module github.com/HRMonitorr/UsersBackend
 
 go 1.21.0
 
-require github.com/HRMonitorr/PasetoprojectBackend v0.0.10
+require github.com/HRMonitorr/PasetoprojectBackend v0.0.11
 
 require (
 	aidanwoods.dev/go-paseto v1.5.0 // indirect

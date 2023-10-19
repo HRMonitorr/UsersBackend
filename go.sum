@@ -16,6 +16,8 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.1.0 h1:HCc0+LpPfpC
 github.com/AzureAD/microsoft-authentication-library-for-go v1.1.0/go.mod h1:wP83P5OoQ5p6ip3ScPr0BAq0BvuPAvacpEuSzyouqAI=
 github.com/HRMonitorr/PasetoprojectBackend v0.0.10 h1:cgEV1nQSG4r5hHZI0rTqRMsXBa7pilFYQgJv7fCePW4=
 github.com/HRMonitorr/PasetoprojectBackend v0.0.10/go.mod h1:sZ3JF5q7Xobgbuw76EnuyN20/YdW4jC+cyo6x9Z5L2c=
+github.com/HRMonitorr/PasetoprojectBackend v0.0.11 h1:PfFtY+qQtB2RR+DW5+qx9WI1yT1fCfIpOUYwqee5cmU=
+github.com/HRMonitorr/PasetoprojectBackend v0.0.11/go.mod h1:sZ3JF5q7Xobgbuw76EnuyN20/YdW4jC+cyo6x9Z5L2c=
 github.com/aiteung/atdb v0.1.1 h1:UZokpNGfwLJ4evU/E8Pkk09lof1ckv/qWCFZkSWLsc8=
 github.com/aiteung/atdb v0.1.1/go.mod h1:pxLum1XaWHcrspqu3n8zHKix2h5czOIiwAgIMKl3cX0=
 github.com/aiteung/athelper v0.1.1 h1:WOVxZAGQs72BeFyzMBW1a2YkOoJNbsCFYsC7db4Rzpw=
