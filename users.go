@@ -3,6 +3,7 @@ package UsersBackend
 import (
 	"encoding/json"
 	pasproj "github.com/HRMonitorr/PasetoprojectBackend"
+	"github.com/whatsauth/watoken"
 	"net/http"
 	"os"
 )
@@ -50,4 +51,41 @@ func Login(Privatekey, MongoEnv, dbname, Colname string, r *http.Request) string
 		}
 	}
 	return pasproj.ReturnStringStruct(resp)
+}
+
+func GetDataUserForAdmin(PublicKey, MongoEnv, dbname, colname string, r *http.Request) string {
+	req := new(pasproj.ResponseDataUser)
+	conn := pasproj.MongoCreateConnection(MongoEnv, dbname)
+	cihuy := new(pasproj.Response)
+	tokenlogin := r.Header.Get("Login")
+
+	if tokenlogin == "" {
+		req.Status = false
+		req.Message = "Header Login Not Found"
+	}
+
+	cekadmin := IsAdmin(tokenlogin, PublicKey)
+	if cekadmin != true {
+		req.Status = false
+		req.Message = "IHHH Kamu bukan admin"
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&cihuy)
+	if err != nil {
+		req.Status = false
+		req.Message = "error parsing application/json: " + err.Error()
+	} else {
+		checktoken := watoken.DecodeGetId(os.Getenv(PublicKey), cihuy.Token)
+		compared := pasproj.CompareUsername(conn, colname, checktoken)
+		if compared != true {
+			req.Status = false
+			req.Message = "Data User tidak ada"
+		} else {
+			datauser := pasproj.GetAllUser(conn, colname)
+			req.Status = true
+			req.Message = "data User berhasil diambil"
+			req.Data = datauser
+		}
+	}
+	return pasproj.ReturnStringStruct(req)
 }
