@@ -3,7 +3,6 @@ package UsersBackend
 import (
 	"encoding/json"
 	pasproj "github.com/HRMonitorr/PasetoprojectBackend"
-	"github.com/whatsauth/watoken"
 	"net/http"
 	"os"
 )
@@ -75,7 +74,11 @@ func GetDataUserForAdmin(PublicKey, MongoEnv, dbname, colname string, r *http.Re
 		req.Status = false
 		req.Message = "error parsing application/json: " + err.Error()
 	} else {
-		checktoken := watoken.DecodeGetId(os.Getenv(PublicKey), cihuy.Token)
+		checktoken, err := pasproj.DecodeGetUser(os.Getenv(PublicKey), cihuy.Token)
+		if err != nil {
+			req.Status = false
+			req.Message = "tidak ada data username : " + cihuy.Token
+		}
 		compared := pasproj.CompareUsername(conn, colname, checktoken)
 		if compared != true {
 			req.Status = false
