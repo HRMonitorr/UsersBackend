@@ -15,3 +15,14 @@ func IsAdmin(Tokenstr, PublicKey string) bool {
 	}
 	return true
 }
+
+func IsHR(TokenStr, Publickey string) bool {
+	role, err := pasproj.DecodeGetRole(Publickey, TokenStr)
+	if err != nil {
+		fmt.Println("Error : " + err.Error())
+	}
+	if role != "admin" {
+		return false
+	}
+	return true
+}
