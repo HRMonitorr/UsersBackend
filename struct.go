@@ -15,12 +15,12 @@ type ResponseEmployee struct {
 }
 
 type Employee struct {
-	EmployeeId string       `json:"employeeid" bson:"employeeid"`
-	Name       string       `json:"name" bson:"name"`
-	Email      string       `json:"email" bson:"email"`
-	Phone      string       `json:"phone" bson:"phone"`
-	Division   Division     `json:"division" bson:"division"`
-	Account    pasproj.User `json:"account" bson:"account"`
+	EmployeeId string       `json:"employeeid" bson:"employeeid,omitempty"`
+	Name       string       `json:"name" bson:"name,omitempty"`
+	Email      string       `json:"email" bson:"email,omitempty"`
+	Phone      string       `json:"phone" bson:"phone,omitempty"`
+	Division   Division     `json:"division" bson:"division,omitempty"`
+	Account    pasproj.User `json:"account" bson:"account,omitempty"`
 }
 
 type Division struct {
