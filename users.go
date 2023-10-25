@@ -151,6 +151,7 @@ func InsertEmployee(MongoEnv, dbname, colname, publickey string, r *http.Request
 					Role:     req.Account.Role,
 				},
 			})
+			pasproj.InsertUserdata(conn, req.Account.Username, req.Account.Role, pass)
 			resp.Status = true
 			resp.Message = "Berhasil Insert data"
 		}
