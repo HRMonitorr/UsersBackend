@@ -40,7 +40,8 @@ func Login(Privatekey, MongoEnv, dbname, Colname string, r *http.Request) string
 		resp.Message = "error parsing application/json: " + err.Error()
 	} else {
 		if pasproj.PasswordValidator(mconn, Colname, datauser) {
-			tokenstring, err := pasproj.EncodeWithRole(datauser.Role, datauser.Username, os.Getenv(Privatekey))
+			datarole := pasproj.GetOneUser(mconn, "user", pasproj.User{Username: datauser.Username})
+			tokenstring, err := pasproj.EncodeWithRole(datarole.Role, datauser.Username, os.Getenv(Privatekey))
 			if err != nil {
 				resp.Message = "Gagal Encode Token : " + err.Error()
 			} else {
