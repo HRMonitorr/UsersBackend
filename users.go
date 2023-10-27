@@ -101,7 +101,7 @@ func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) st
 			req.Message = "error parsing application/json: " + err.Error()
 		} else {
 			checkadmin := IsAdmin(tokenlogin, publickey)
-			if !checkadmin {
+			if checkadmin == false {
 				checkHR := IsHR(tokenlogin, publickey)
 				if !checkHR {
 					req.Status = false
