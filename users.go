@@ -1,6 +1,7 @@
 package UsersBackend
 
 import (
+	"context"
 	"encoding/json"
 	pasproj "github.com/HRMonitorr/PasetoprojectBackend"
 	"github.com/gofiber/fiber/v2"
@@ -85,7 +86,7 @@ func GetDataUserForAdmin(PublicKey, MongoEnv, dbname, colname string, r *http.Re
 	return pasproj.ReturnStringStruct(req)
 }
 
-func UpdateDataEmployees(MongoEnv, dbname, publickey string, ctx *fiber.Ctx, r *http.Request) string {
+func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) string {
 	req := new(pasproj.Credential)
 	resp := new(Updated)
 	tokenlogin := r.Header.Get("Login")
@@ -105,7 +106,7 @@ func UpdateDataEmployees(MongoEnv, dbname, publickey string, ctx *fiber.Ctx, r *
 					req.Message = "Anda tidak bisa Update data karena bukan admin atau HR"
 				}
 			} else {
-				UpdateEmployee(MongoEnv, dbname, ctx.Context(), Employee{Phone: resp.Phone, Email: resp.Email})
+				UpdateEmployee(MongoEnv, dbname, context.Background(), Employee{Phone: resp.Phone, Email: resp.Email})
 				req.Status = true
 				req.Message = "Berhasil Update data"
 			}
