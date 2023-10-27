@@ -100,10 +100,13 @@ func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) st
 		if err != nil {
 			req.Message = "error parsing application/json: " + err.Error()
 		} else {
-			checkadmin := IsAdmin(tokenlogin, publickey)
-			if checkadmin == false {
-				req.Status = false
-				req.Message = "Anda tidak bisa Update data karena bukan admin"
+			checkadmin := IsAdmin(tokenlogin, os.Getenv(publickey))
+			if !checkadmin {
+				checkHR := IsHR(tokenlogin, os.Getenv(publickey))
+				if !checkHR {
+					req.Status = false
+					req.Message = "Anda tidak bisa Insert data karena bukan HR atau admin"
+				}
 			} else {
 				UpdateEmployee(MongoEnv, dbname, context.Background(), Employee{EmployeeId: resp.EmployeeId, Phone: resp.Phone, Email: resp.Email})
 				req.Status = true
@@ -123,10 +126,13 @@ func InsertEmployee(MongoEnv, dbname, colname, publickey string, r *http.Request
 		resp.Status = false
 		resp.Message = "Header Login Not Found"
 	} else {
-		checkadmin := IsAdmin(tokenlogin, publickey)
+		checkadmin := IsAdmin(tokenlogin, os.Getenv(publickey))
 		if !checkadmin {
-			resp.Status = false
-			resp.Message = "Anda tidak bisa Insert data karena bukan admin"
+			checkHR := IsHR(tokenlogin, os.Getenv(publickey))
+			if !checkHR {
+				resp.Status = false
+				resp.Message = "Anda tidak bisa Insert data karena bukan HR atau admin"
+			}
 		} else {
 			pass, err := pasproj.HashPass(req.Account.Password)
 			if err != nil {
