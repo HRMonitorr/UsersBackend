@@ -44,6 +44,7 @@ func Login(Privatekey, MongoEnv, dbname, Colname string, r *http.Request) string
 			if err != nil {
 				resp.Message = "Gagal Encode Token : " + err.Error()
 			} else {
+				resp.Status = true
 				resp.Message = "Selamat Datang"
 				resp.Token = tokenstring
 			}
@@ -88,7 +89,7 @@ func GetDataUserForAdmin(PublicKey, MongoEnv, dbname, colname string, r *http.Re
 
 func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) string {
 	req := new(pasproj.Credential)
-	resp := new(Updated)
+	resp := new(Employee)
 	tokenlogin := r.Header.Get("Login")
 	if tokenlogin == "" {
 		req.Status = false
@@ -106,7 +107,7 @@ func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) st
 					req.Message = "Anda tidak bisa Update data karena bukan admin atau HR"
 				}
 			} else {
-				UpdateEmployee(MongoEnv, dbname, context.Background(), Employee{Phone: resp.Phone, Email: resp.Email})
+				UpdateEmployee(MongoEnv, dbname, context.Background(), Employee{EmployeeId: resp.EmployeeId, Phone: resp.Phone, Email: resp.Email})
 				req.Status = true
 				req.Message = "Berhasil Update data"
 			}
