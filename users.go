@@ -102,11 +102,8 @@ func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) st
 		} else {
 			checkadmin := IsAdmin(tokenlogin, publickey)
 			if checkadmin == false {
-				checkHR := IsHR(tokenlogin, publickey)
-				if !checkHR {
-					req.Status = false
-					req.Message = "Anda tidak bisa Update data karena bukan admin atau HR"
-				}
+				req.Status = false
+				req.Message = "Anda tidak bisa Update data karena bukan admin"
 			} else {
 				UpdateEmployee(MongoEnv, dbname, context.Background(), Employee{EmployeeId: resp.EmployeeId, Phone: resp.Phone, Email: resp.Email})
 				req.Status = true
@@ -128,11 +125,8 @@ func InsertEmployee(MongoEnv, dbname, colname, publickey string, r *http.Request
 	} else {
 		checkadmin := IsAdmin(tokenlogin, publickey)
 		if !checkadmin {
-			checkHR := IsHR(tokenlogin, publickey)
-			if !checkHR {
-				resp.Status = false
-				resp.Message = "Anda tidak bisa Update data karena bukan admin atau HR"
-			}
+			resp.Status = false
+			resp.Message = "Anda tidak bisa Insert data karena bukan admin"
 		} else {
 			pass, err := pasproj.HashPass(req.Account.Password)
 			if err != nil {

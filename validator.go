@@ -21,7 +21,7 @@ func IsHR(TokenStr, Publickey string) bool {
 	if err != nil {
 		fmt.Println("Error : " + err.Error())
 	}
-	if role != "admin" {
+	if role != "HR" {
 		return false
 	}
 	return true
