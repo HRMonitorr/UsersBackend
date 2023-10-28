@@ -44,3 +44,15 @@ func UpdateEmployee(Mongoenv, dbname string, ctx context.Context, emp Employee) 
 	}
 	return res
 }
+
+func UpdatePassword(mongoconn *mongo.Database, user pasproj.User) (Updatedid interface{}) {
+	filter := bson.D{{"username", user.Username}}
+	update := bson.D{{"$Set", bson.D{
+		{"password", pasproj.HashPass(user.Password)},
+	}}}
+	res, err := mongoconn.Collection("user").UpdateOne(context.Background(), filter, update)
+	if err != nil {
+		return "gagal update data"
+	}
+	return res
+}

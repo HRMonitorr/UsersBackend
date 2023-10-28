@@ -117,6 +117,31 @@ func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) st
 	return pasproj.ReturnStringStruct(req)
 }
 
+func ResetPassword(MongoEnv, publickey, dbname, colname string, r *http.Request) string {
+	resp := new(Cred)
+	req := new(pasproj.User)
+	conn := pasproj.MongoCreateConnection(MongoEnv, dbname)
+	tokenlogin := r.Header.Get("Login")
+	if tokenlogin == "" {
+		resp.Status = fiber.StatusBadRequest
+		resp.Message = "Token login tidak ada"
+	} else {
+		checkadmin := IsAdmin(tokenlogin, os.Getenv(publickey))
+		if !checkadmin {
+			resp.Status = fiber.StatusInternalServerError
+			resp.Message = "kamu bukan admin"
+		} else {
+			UpdatePassword(conn, pasproj.User{
+				Username: req.Username,
+				Password: req.Password,
+			})
+			resp.Status = fiber.StatusOK
+			resp.Message = "Berhasil reset password"
+		}
+	}
+	return pasproj.ReturnStringStruct(resp)
+}
+
 func DeleteUserforAdmin(Mongoenv, publickey, dbname, colname string, r *http.Request) string {
 	resp := new(Cred)
 	req := new(ReqUsers)
