@@ -32,3 +32,12 @@ type Updated struct {
 	Email string `json:"email" bson:"email"`
 	Phone string `json:"phone" bson:"phone"`
 }
+
+type Cred struct {
+	Status  int    `json:"status"`
+	Message string `json:"message"`
+}
+
+type ReqUsers struct {
+	Username string `json:"username"`
+}
