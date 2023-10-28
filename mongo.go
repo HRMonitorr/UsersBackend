@@ -25,6 +25,12 @@ func GetDataEmployee(MongoConn *mongo.Database, colname, empid string) Employee 
 	return data
 }
 
+func DeleteUser(Mongoconn *mongo.Database, colname, username string) (deleted interface{}, err error) {
+	filter := bson.M{"username": username}
+	data := atdb.DeleteOneDoc(Mongoconn, colname, filter)
+	return data, err
+}
+
 func UpdateEmployee(Mongoenv, dbname string, ctx context.Context, emp Employee) (UpdateId interface{}) {
 	conn := pasproj.MongoCreateConnection(Mongoenv, dbname)
 	filter := bson.D{{"employeeid", emp.EmployeeId}}
