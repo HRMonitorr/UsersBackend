@@ -283,18 +283,23 @@ func DeleteEmployee(Mongoenv, publickey, dbname, colname string, r *http.Request
 		resp.Status = fiber.StatusBadRequest
 		resp.Message = "Token login tidak ada"
 	} else {
-		checkadmin := IsAdmin(tokenlogin, os.Getenv(publickey))
-		if !checkadmin {
-			resp.Status = fiber.StatusInternalServerError
-			resp.Message = "kamu bukan admin"
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			resp.Message = "error parsing application/json: " + err.Error()
 		} else {
-			_, err := DeleteEmployeeData(conn, colname, req.EmployeeId)
-			if err != nil {
-				resp.Status = fiber.StatusBadRequest
-				resp.Message = "gagal hapus data"
+			checkadmin := IsAdmin(tokenlogin, os.Getenv(publickey))
+			if !checkadmin {
+				resp.Status = fiber.StatusInternalServerError
+				resp.Message = "kamu bukan admin"
+			} else {
+				_, err := DeleteEmployeeData(conn, colname, req.EmployeeId)
+				if err != nil {
+					resp.Status = fiber.StatusBadRequest
+					resp.Message = "gagal hapus data"
+				}
+				resp.Status = fiber.StatusOK
+				resp.Message = "data berhasil dihapus"
 			}
-			resp.Status = fiber.StatusOK
-			resp.Message = "data berhasil dihapus"
 		}
 	}
 	return pasproj.ReturnStringStruct(resp)
