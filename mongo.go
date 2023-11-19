@@ -25,6 +25,11 @@ func GetDataEmployee(MongoConn *mongo.Database, colname, empid string) Employee 
 	return data
 }
 
+func GetAllEmployeeData(Mongoconn *mongo.Database, colname string) []Employee {
+	data := atdb.GetAllDoc[[]Employee](Mongoconn, colname)
+	return data
+}
+
 func DeleteUser(Mongoconn *mongo.Database, colname, username string) (deleted interface{}, err error) {
 	filter := bson.M{"username": username}
 	data := atdb.DeleteOneDoc(Mongoconn, colname, filter)
