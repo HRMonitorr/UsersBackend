@@ -268,3 +268,29 @@ func GetAllEmployee(PublicKey, Mongoenv, dbname, colname string, r *http.Request
 	}
 	return pasproj.ReturnStringStruct(req)
 }
+
+func DeleteEmployee(Mongoenv, publickey, dbname, colname string, r *http.Request) string {
+	resp := new(Cred)
+	req := new(RequestEmployee)
+	conn := pasproj.MongoCreateConnection(Mongoenv, dbname)
+	tokenlogin := r.Header.Get("Login")
+	if tokenlogin == "" {
+		resp.Status = fiber.StatusBadRequest
+		resp.Message = "Token login tidak ada"
+	} else {
+		checkadmin := IsAdmin(tokenlogin, os.Getenv(publickey))
+		if !checkadmin {
+			resp.Status = fiber.StatusInternalServerError
+			resp.Message = "kamu bukan admin"
+		} else {
+			_, err := DeleteEmployeeData(conn, colname, req.EmployeeId)
+			if err != nil {
+				resp.Status = fiber.StatusBadRequest
+				resp.Message = "gagal hapus data"
+			}
+			resp.Status = fiber.StatusOK
+			resp.Message = "data berhasil dihapus"
+		}
+	}
+	return pasproj.ReturnStringStruct(resp)
+}

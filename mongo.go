@@ -62,3 +62,9 @@ func UpdatePassword(mongoconn *mongo.Database, user pasproj.User) (Updatedid int
 	}
 	return res
 }
+
+func DeleteEmployeeData(mongoconn *mongo.Database, colname, EmpId string) (deletedid interface{}, err error) {
+	filter := bson.M{"employeeid": EmpId}
+	data := atdb.DeleteOneDoc(mongoconn, colname, filter)
+	return data, err
+}

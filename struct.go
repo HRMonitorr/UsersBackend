@@ -53,3 +53,7 @@ type Cred struct {
 type ReqUsers struct {
 	Username string `json:"username"`
 }
+
+type RequestEmployee struct {
+	EmployeeId string `json:"employeeid"`
+}
