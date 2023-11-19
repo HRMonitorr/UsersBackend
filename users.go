@@ -156,33 +156,38 @@ func InsertEmployee(MongoEnv, dbname, colname, publickey string, r *http.Request
 				resp.Message = "Anda tidak bisa Insert data karena bukan HR atau admin"
 			}
 		} else {
-			pass, err := pasproj.HashPass(req.Account.Password)
+			err := json.NewDecoder(r.Body).Decode(&req)
 			if err != nil {
-				resp.Status = false
-				resp.Message = "Gagal Hash Code"
+				resp.Message = "error parsing application/json: " + err.Error()
+			} else {
+				pass, err := pasproj.HashPass(req.Account.Password)
+				if err != nil {
+					resp.Status = false
+					resp.Message = "Gagal Hash Code"
+				}
+				InsertDataEmployee(conn, colname, Employee{
+					EmployeeId: req.EmployeeId,
+					Name:       req.Name,
+					Email:      req.Email,
+					Phone:      req.Phone,
+					Division: Division{
+						DivId:   req.Division.DivId,
+						DivName: req.Division.DivName,
+					},
+					Account: pasproj.User{
+						Username: req.Account.Username,
+						Password: pass,
+						Role:     req.Account.Role,
+					},
+					Salary: Salary{
+						BasicSalary:   req.Salary.BasicSalary,
+						HonorDivision: req.Salary.HonorDivision,
+					},
+				})
+				pasproj.InsertUserdata(conn, req.Account.Username, req.Account.Role, pass)
+				resp.Status = true
+				resp.Message = "Berhasil Insert data"
 			}
-			InsertDataEmployee(conn, colname, Employee{
-				EmployeeId: req.EmployeeId,
-				Name:       req.Name,
-				Email:      req.Email,
-				Phone:      req.Phone,
-				Division: Division{
-					DivId:   req.Division.DivId,
-					DivName: req.Division.DivName,
-				},
-				Account: pasproj.User{
-					Username: req.Account.Username,
-					Password: pass,
-					Role:     req.Account.Role,
-				},
-				Salary: Salary{
-					BasicSalary:   req.Salary.BasicSalary,
-					HonorDivision: req.Salary.HonorDivision,
-				},
-			})
-			pasproj.InsertUserdata(conn, req.Account.Username, req.Account.Role, pass)
-			resp.Status = true
-			resp.Message = "Berhasil Insert data"
 		}
 	}
 	return pasproj.ReturnStringStruct(resp)
