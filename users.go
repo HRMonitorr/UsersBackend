@@ -88,35 +88,6 @@ func GetDataUserForAdmin(PublicKey, MongoEnv, dbname, colname string, r *http.Re
 	return pasproj.ReturnStringStruct(req)
 }
 
-func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) string {
-	req := new(pasproj.Credential)
-	resp := new(Employee)
-	tokenlogin := r.Header.Get("Login")
-	if tokenlogin == "" {
-		req.Status = false
-		req.Message = "Header Login Not Found"
-	} else {
-		err := json.NewDecoder(r.Body).Decode(&resp)
-		if err != nil {
-			req.Message = "error parsing application/json: " + err.Error()
-		} else {
-			checkadmin := IsAdmin(tokenlogin, os.Getenv(publickey))
-			if !checkadmin {
-				checkHR := IsHR(tokenlogin, os.Getenv(publickey))
-				if !checkHR {
-					req.Status = false
-					req.Message = "Anda tidak bisa Insert data karena bukan HR atau admin"
-				}
-			} else {
-				UpdateEmployee(MongoEnv, dbname, context.Background(), Employee{EmployeeId: resp.EmployeeId, Phone: resp.Phone, Email: resp.Email})
-				req.Status = true
-				req.Message = "Berhasil Update data"
-			}
-		}
-	}
-	return pasproj.ReturnStringStruct(req)
-}
-
 func ResetPassword(MongoEnv, publickey, dbname, colname string, r *http.Request) string {
 	resp := new(Cred)
 	req := new(pasproj.User)
@@ -204,6 +175,10 @@ func InsertEmployee(MongoEnv, dbname, colname, publickey string, r *http.Request
 					Password: pass,
 					Role:     req.Account.Role,
 				},
+				Salary: Salary{
+					BasicSalary:   req.Salary.BasicSalary,
+					HonorDivision: req.Salary.HonorDivision,
+				},
 			})
 			pasproj.InsertUserdata(conn, req.Account.Username, req.Account.Role, pass)
 			resp.Status = true
@@ -211,6 +186,35 @@ func InsertEmployee(MongoEnv, dbname, colname, publickey string, r *http.Request
 		}
 	}
 	return pasproj.ReturnStringStruct(resp)
+}
+
+func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) string {
+	req := new(pasproj.Credential)
+	resp := new(Employee)
+	tokenlogin := r.Header.Get("Login")
+	if tokenlogin == "" {
+		req.Status = false
+		req.Message = "Header Login Not Found"
+	} else {
+		err := json.NewDecoder(r.Body).Decode(&resp)
+		if err != nil {
+			req.Message = "error parsing application/json: " + err.Error()
+		} else {
+			checkadmin := IsAdmin(tokenlogin, os.Getenv(publickey))
+			if !checkadmin {
+				checkHR := IsHR(tokenlogin, os.Getenv(publickey))
+				if !checkHR {
+					req.Status = false
+					req.Message = "Anda tidak bisa Insert data karena bukan HR atau admin"
+				}
+			} else {
+				UpdateEmployee(MongoEnv, dbname, context.Background(), Employee{EmployeeId: resp.EmployeeId, Phone: resp.Phone, Email: resp.Email})
+				req.Status = true
+				req.Message = "Berhasil Update data"
+			}
+		}
+	}
+	return pasproj.ReturnStringStruct(req)
 }
 
 func GetOneEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request) string {
@@ -222,17 +226,41 @@ func GetOneEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request
 		req.Status = fiber.StatusBadRequest
 		req.Message = "Header Login Not Found"
 	} else {
-		checktoken, err := pasproj.DecodeGetUser(os.Getenv(PublicKey), tokenlogin)
-		if err != nil {
-			req.Status = fiber.StatusBadRequest
-			req.Message = "tidak ada data username : " + tokenlogin
-		}
-		compared := pasproj.CompareUsername(conn, colname, checktoken)
-		if compared != true {
-			req.Status = fiber.StatusBadRequest
-			req.Message = "Data User tidak ada"
+		checkadmin := IsAdmin(tokenlogin, os.Getenv(PublicKey))
+		if !checkadmin {
+			checkHR := IsHR(tokenlogin, os.Getenv(PublicKey))
+			if !checkHR {
+				req.Status = fiber.StatusBadRequest
+				req.Message = "Anda tidak bisa Insert data karena bukan HR atau admin"
+			}
 		} else {
 			datauser := GetDataEmployee(conn, colname, resp.EmployeeId)
+			req.Status = fiber.StatusOK
+			req.Message = "data User berhasil diambil"
+			req.Data = datauser
+		}
+	}
+	return pasproj.ReturnStringStruct(req)
+}
+
+func GetAllEmployee(PublicKey, Mongoenv, dbname, colname string, r *http.Request) string {
+	req := new(ResponseEmployeeBanyak)
+	//resp := new(Employee)
+	conn := pasproj.MongoCreateConnection(Mongoenv, dbname)
+	tokenlogin := r.Header.Get("Login")
+	if tokenlogin == "" {
+		req.Status = fiber.StatusBadRequest
+		req.Message = "Header Login Not Found"
+	} else {
+		checkadmin := IsAdmin(tokenlogin, os.Getenv(PublicKey))
+		if !checkadmin {
+			checkHR := IsHR(tokenlogin, os.Getenv(PublicKey))
+			if !checkHR {
+				req.Status = fiber.StatusBadRequest
+				req.Message = "Anda tidak bisa Insert data karena bukan HR atau admin"
+			}
+		} else {
+			datauser := GetAllEmployeeData(conn, colname)
 			req.Status = fiber.StatusOK
 			req.Message = "data User berhasil diambil"
 			req.Data = datauser
