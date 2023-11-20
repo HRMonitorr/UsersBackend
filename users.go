@@ -250,7 +250,7 @@ func GetOneEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request
 		req.Status = fiber.StatusBadRequest
 		req.Message = "Header Login Not Found"
 	} else {
-		err := json.NewDecoder(r.Body).Decode(&req)
+		err := json.NewDecoder(r.Body).Decode(&resp)
 		if err != nil {
 			req.Message = "error parsing application/json: " + err.Error()
 		} else {
