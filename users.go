@@ -243,7 +243,7 @@ func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) st
 
 func GetOneEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request) string {
 	req := new(ResponseEmployee)
-	resp := new(Employee)
+	resp := new(RequestEmployee)
 	conn := pasproj.MongoCreateConnection(MongoEnv, dbname)
 	tokenlogin := r.Header.Get("Login")
 	if tokenlogin == "" {
