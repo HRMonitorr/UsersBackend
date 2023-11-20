@@ -19,12 +19,6 @@ func InsertDataEmployee(MongoConn *mongo.Database, colname string, emp Employee)
 	return pasproj.InsertOneDoc(MongoConn, colname, req)
 }
 
-func GetDataEmployee(MongoConn *mongo.Database, colname, empid string) Employee {
-	filter := bson.M{"employeeid": empid}
-	data := atdb.GetOneDoc[Employee](MongoConn, colname, filter)
-	return data
-}
-
 func GetAllEmployeeData(Mongoconn *mongo.Database, colname string) []Employee {
 	data := atdb.GetAllDoc[[]Employee](Mongoconn, colname)
 	return data
@@ -62,4 +56,10 @@ func DeleteEmployeeData(mongoconn *mongo.Database, colname, EmpId string) (delet
 	filter := bson.M{"employeeid": EmpId}
 	data := atdb.DeleteOneDoc(mongoconn, colname, filter)
 	return data, err
+}
+
+func GetOneEmployeeData(mongoconn *mongo.Database, colname, Empid string) (dest Employee) {
+	filter := bson.M{"employeeid": Empid}
+	dest = atdb.GetOneDoc[Employee](mongoconn, colname, filter)
+	return
 }
