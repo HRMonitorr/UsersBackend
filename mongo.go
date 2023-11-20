@@ -36,18 +36,13 @@ func DeleteUser(Mongoconn *mongo.Database, colname, username string) (deleted in
 	return data, err
 }
 
-func UpdateEmployee(Mongoenv, dbname string, ctx context.Context, emp Employee) (UpdateId interface{}) {
-	conn := pasproj.MongoCreateConnection(Mongoenv, dbname)
+func UpdateEmployee(Mongoconn *mongo.Database, ctx context.Context, emp Employee) (UpdateId interface{}, err error) {
 	filter := bson.D{{"employeeid", emp.EmployeeId}}
-	update := bson.D{{"$set", bson.D{
-		{"phone", emp.Phone},
-		{"email", emp.Email},
-	}}}
-	res, err := conn.Collection("employee").UpdateOne(ctx, filter, update)
+	res, err := Mongoconn.Collection("employee").ReplaceOne(ctx, filter, emp)
 	if err != nil {
-		return "Gagal Update"
+		return nil, err
 	}
-	return res
+	return res, nil
 }
 
 func UpdatePassword(mongoconn *mongo.Database, user pasproj.User) (Updatedid interface{}) {
