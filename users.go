@@ -250,18 +250,23 @@ func GetOneEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request
 		req.Status = fiber.StatusBadRequest
 		req.Message = "Header Login Not Found"
 	} else {
-		checkadmin := IsAdmin(tokenlogin, os.Getenv(PublicKey))
-		if !checkadmin {
-			checkHR := IsHR(tokenlogin, os.Getenv(PublicKey))
-			if !checkHR {
-				req.Status = fiber.StatusBadRequest
-				req.Message = "Anda tidak bisa Get data karena bukan HR atau admin"
-			}
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			req.Message = "error parsing application/json: " + err.Error()
 		} else {
-			datauser := GetOneEmployeeData(conn, colname, resp.EmployeeId)
-			req.Status = fiber.StatusOK
-			req.Message = "data User berhasil diambil"
-			req.Data = datauser
+			checkadmin := IsAdmin(tokenlogin, os.Getenv(PublicKey))
+			if !checkadmin {
+				checkHR := IsHR(tokenlogin, os.Getenv(PublicKey))
+				if !checkHR {
+					req.Status = fiber.StatusBadRequest
+					req.Message = "Anda tidak bisa Get data karena bukan HR atau admin"
+				}
+			} else {
+				datauser := GetOneEmployeeData(conn, colname, resp.EmployeeId)
+				req.Status = fiber.StatusOK
+				req.Message = "data User berhasil diambil"
+				req.Data = datauser
+			}
 		}
 	}
 	return pasproj.ReturnStringStruct(req)
