@@ -213,7 +213,26 @@ func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) st
 					req.Message = "Anda tidak bisa Insert data karena bukan HR atau admin"
 				}
 			} else {
-				UpdateEmployee(MongoEnv, dbname, context.Background(), Employee{EmployeeId: resp.EmployeeId, Phone: resp.Phone, Email: resp.Email})
+				conn := pasproj.MongoCreateConnection(MongoEnv, dbname)
+				UpdateEmployee(conn, context.Background(), Employee{
+					EmployeeId: resp.EmployeeId,
+					Name:       resp.Name,
+					Email:      resp.Email,
+					Phone:      resp.Phone,
+					Division: Division{
+						DivId:   resp.Division.DivId,
+						DivName: resp.Division.DivName,
+					},
+					Account: pasproj.User{
+						Username: resp.Account.Username,
+						Password: resp.Account.Password,
+						Role:     resp.Account.Role,
+					},
+					Salary: Salary{
+						BasicSalary:   resp.Salary.BasicSalary,
+						HonorDivision: resp.Salary.HonorDivision,
+					},
+				})
 				req.Status = true
 				req.Message = "Berhasil Update data"
 			}
