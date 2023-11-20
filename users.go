@@ -255,10 +255,10 @@ func GetOneEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request
 			checkHR := IsHR(tokenlogin, os.Getenv(PublicKey))
 			if !checkHR {
 				req.Status = fiber.StatusBadRequest
-				req.Message = "Anda tidak bisa Insert data karena bukan HR atau admin"
+				req.Message = "Anda tidak bisa Get data karena bukan HR atau admin"
 			}
 		} else {
-			datauser := GetDataEmployee(conn, colname, resp.EmployeeId)
+			datauser := GetOneEmployeeData(conn, colname, resp.EmployeeId)
 			req.Status = fiber.StatusOK
 			req.Message = "data User berhasil diambil"
 			req.Data = datauser
@@ -269,7 +269,6 @@ func GetOneEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request
 
 func GetAllEmployee(PublicKey, Mongoenv, dbname, colname string, r *http.Request) string {
 	req := new(ResponseEmployeeBanyak)
-	//resp := new(Employee)
 	conn := pasproj.MongoCreateConnection(Mongoenv, dbname)
 	tokenlogin := r.Header.Get("Login")
 	if tokenlogin == "" {
