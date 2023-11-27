@@ -9,6 +9,7 @@ import (
 	"os"
 )
 
+// reg User
 func Register(Mongoenv, dbname string, r *http.Request) string {
 	resp := new(pasproj.Credential)
 	userdata := new(pasproj.User)
@@ -31,6 +32,7 @@ func Register(Mongoenv, dbname string, r *http.Request) string {
 
 }
 
+// log User
 func Login(Privatekey, MongoEnv, dbname, Colname string, r *http.Request) string {
 	var resp pasproj.Credential
 	mconn := pasproj.MongoCreateConnection(MongoEnv, dbname)
@@ -56,6 +58,7 @@ func Login(Privatekey, MongoEnv, dbname, Colname string, r *http.Request) string
 	return pasproj.ReturnStringStruct(resp)
 }
 
+// Get Data User
 func GetDataUserForAdmin(PublicKey, MongoEnv, dbname, colname string, r *http.Request) string {
 	req := new(pasproj.ResponseDataUser)
 	conn := pasproj.MongoCreateConnection(MongoEnv, dbname)
@@ -88,6 +91,7 @@ func GetDataUserForAdmin(PublicKey, MongoEnv, dbname, colname string, r *http.Re
 	return pasproj.ReturnStringStruct(req)
 }
 
+// Reset Password
 func ResetPassword(MongoEnv, publickey, dbname, colname string, r *http.Request) string {
 	resp := new(Cred)
 	req := new(pasproj.User)
@@ -113,6 +117,7 @@ func ResetPassword(MongoEnv, publickey, dbname, colname string, r *http.Request)
 	return pasproj.ReturnStringStruct(resp)
 }
 
+// Delete User
 func DeleteUserforAdmin(Mongoenv, publickey, dbname, colname string, r *http.Request) string {
 	resp := new(Cred)
 	req := new(ReqUsers)
@@ -139,6 +144,7 @@ func DeleteUserforAdmin(Mongoenv, publickey, dbname, colname string, r *http.Req
 	return pasproj.ReturnStringStruct(resp)
 }
 
+// Insert data
 func InsertEmployee(MongoEnv, dbname, colname, publickey string, r *http.Request) string {
 	resp := new(pasproj.Credential)
 	req := new(Employee)
@@ -193,6 +199,7 @@ func InsertEmployee(MongoEnv, dbname, colname, publickey string, r *http.Request
 	return pasproj.ReturnStringStruct(resp)
 }
 
+// Update data
 func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) string {
 	req := new(pasproj.Credential)
 	resp := new(Employee)
@@ -241,6 +248,7 @@ func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) st
 	return pasproj.ReturnStringStruct(req)
 }
 
+// Get One
 func GetOneEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request) string {
 	req := new(ResponseEmployee)
 	resp := new(RequestEmployee)
@@ -272,6 +280,7 @@ func GetOneEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request
 	return pasproj.ReturnStringStruct(req)
 }
 
+// GetAll
 func GetAllEmployee(PublicKey, Mongoenv, dbname, colname string, r *http.Request) string {
 	req := new(ResponseEmployeeBanyak)
 	conn := pasproj.MongoCreateConnection(Mongoenv, dbname)
@@ -297,6 +306,7 @@ func GetAllEmployee(PublicKey, Mongoenv, dbname, colname string, r *http.Request
 	return pasproj.ReturnStringStruct(req)
 }
 
+// Delete Data
 func DeleteEmployee(Mongoenv, publickey, dbname, colname string, r *http.Request) string {
 	resp := new(Cred)
 	req := new(RequestEmployee)
