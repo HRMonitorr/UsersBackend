@@ -1,6 +1,9 @@
 package UsersBackend
 
-import pasproj "github.com/HRMonitorr/PasetoprojectBackend"
+import (
+	pasproj "github.com/HRMonitorr/PasetoprojectBackend"
+	"time"
+)
 
 type ResponseBack struct {
 	Status  int      `json:"status"`
@@ -12,6 +15,13 @@ type ResponseEmployee struct {
 	Status  int      `json:"status"`
 	Message string   `json:"message"`
 	Data    Employee `json:"data"`
+}
+
+type Users struct {
+	Username string `json:"username" bson:"username"`
+	Password string `json:"password" bson:"password"`
+	PhoneNum string `json:"phone-num" bson:"phone-num"`
+	Role     string `json:"role,omitempty" bson:"role,omitempty"`
 }
 
 type ResponseEmployeeBanyak struct {
@@ -56,4 +66,15 @@ type ReqUsers struct {
 
 type RequestEmployee struct {
 	EmployeeId string `json:"employeeid"`
+}
+
+type Responses struct {
+	Response string `bson:"response" json:"response"`
+}
+
+type OTP struct {
+	Username string    `json:"username" bson:"username"`
+	Role     string    `bson:"role" json:"role"`
+	DateOTP  time.Time `json:"date-otp" bson:"date-otp"`
+	OTPCode  string    `bson:"otp-code" json:"otp-code"`
 }

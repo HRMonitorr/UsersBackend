@@ -8,6 +8,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func MongoCreateConnection(MongoString, dbname string) *mongo.Database {
+	MongoInfo := atdb.DBInfo{
+		DBString: MongoString,
+		DBName:   dbname,
+	}
+	conn := atdb.MongoConnect(MongoInfo)
+	return conn
+}
+
 func InsertDataEmployee(MongoConn *mongo.Database, colname string, emp Employee) (InsertedID interface{}) {
 	req := new(Employee)
 	req.EmployeeId = emp.EmployeeId
@@ -62,4 +71,24 @@ func GetOneEmployeeData(mongoconn *mongo.Database, colname, Empid string) (dest 
 	filter := bson.M{"employeeid": Empid}
 	dest = atdb.GetOneDoc[Employee](mongoconn, colname, filter)
 	return
+}
+
+func InsertOtp(MongoConn *mongo.Database, colname string, otp OTP) (InsertedID interface{}) {
+	return pasproj.InsertOneDoc(MongoConn, colname, otp)
+}
+
+func GetOtp(mongoconn *mongo.Database, colname, otp string) (dest Employee) {
+	filter := bson.M{"otp-code": otp}
+	dest = atdb.GetOneDoc[Employee](mongoconn, colname, filter)
+	return
+}
+
+func InsertUserdata(MongoConn *mongo.Database, user Users) (InsertedID interface{}) {
+	return pasproj.InsertOneDoc(MongoConn, "user", user)
+}
+
+func GetOneUser(MongoConn *mongo.Database, colname string, userdata Users) Users {
+	filter := bson.M{"username": userdata.Username}
+	data := atdb.GetOneDoc[Users](MongoConn, colname, filter)
+	return data
 }

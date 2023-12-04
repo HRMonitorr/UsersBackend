@@ -4,15 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	pasproj "github.com/HRMonitorr/PasetoprojectBackend"
+	"github.com/aiteung/atapi"
 	"github.com/gofiber/fiber/v2"
+	"github.com/whatsauth/wa"
 	"net/http"
 	"os"
+	"time"
 )
 
 // reg User
 func Register(Mongoenv, dbname string, r *http.Request) string {
 	resp := new(pasproj.Credential)
-	userdata := new(pasproj.User)
+	userdata := new(Users)
 	resp.Status = false
 	conn := pasproj.MongoCreateConnection(Mongoenv, dbname)
 	err := json.NewDecoder(r.Body).Decode(&userdata)
@@ -53,6 +56,45 @@ func Login(Privatekey, MongoEnv, dbname, Colname string, r *http.Request) string
 			}
 		} else {
 			resp.Message = "Password Salah"
+		}
+	}
+	return pasproj.ReturnStringStruct(resp)
+}
+
+func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
+	var resp pasproj.Credential
+	mconn := pasproj.MongoCreateConnection(MongoEnv, dbname)
+	var datauser Users
+	err := json.NewDecoder(r.Body).Decode(&datauser)
+	if r.Header.Get("Secret") == os.Getenv("SECRET") {
+		if err != nil {
+			resp.Message = "error parsing application/json: " + err.Error()
+		} else {
+			if pasproj.PasswordValidator(mconn, Colname, pasproj.User{
+				Username: datauser.Username,
+				Password: datauser.Password,
+				Role:     datauser.Role,
+			}) {
+				datarole := GetOneUser(mconn, "user", Users{Username: datauser.Username})
+				data := OTP{
+					Username: datauser.Username,
+					Role:     datarole.Role,
+					DateOTP:  time.Now(),
+					OTPCode:  CreateOTP(),
+				}
+				InsertOtp(mconn, "otp", data)
+				dt := &wa.TextMessage{
+					To:       datarole.PhoneNum,
+					IsGroup:  false,
+					Messages: "Hai hai kak \n Ini OTP kakak " + data.OTPCode,
+				}
+				res, _ := atapi.PostStructWithToken[Responses]("Token", os.Getenv("TOKEN"), dt, "https://api.wa.my.id/api/send/message/text")
+				resp.Status = true
+				resp.Message = "Hai Silahkan cek WhatsApp untuk OTPnya yaa"
+				resp.Token = res.Response
+			} else {
+				resp.Message = "Password Salah"
+			}
 		}
 	}
 	return pasproj.ReturnStringStruct(resp)
