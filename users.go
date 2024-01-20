@@ -80,8 +80,8 @@ func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 			resp.Message = "Data User tidak ditemukan nih bestie"
 		}
 		if pasproj.PasswordValidator(mconn, Colname, pasproj.User{
-			Username: datarole.Username,
-			Password: datarole.Password,
+			Username: datauser.Username,
+			Password: datauser.Password,
 			Role:     datarole.Role,
 		}) {
 			data := OTP{
