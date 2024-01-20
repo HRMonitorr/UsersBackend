@@ -97,7 +97,7 @@ func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 				IsGroup:  false,
 				Messages: fmt.Sprintf("Hai hai kak \n Ini OTP kakak %s", data.OTPCode),
 			}
-			res, errmsg := atapi.PostStructWithToken[Responses]("Token", os.Getenv("TOKEN"), dt, "https://api.wa.my.id/api/send/message/text")
+			res, errmsg := atapi.PostStructWithToken[Responses]("Token", os.Getenv("SECRET"), dt, "https://api.wa.my.id/api/send/message/text")
 			resp.Status = true
 			resp.Message = "Hai Silahkan cek WhatsApp untuk OTPnya yaa " + data.OTPCode + " " + errmsg
 			resp.Token = res.Response
