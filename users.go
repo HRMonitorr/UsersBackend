@@ -3,6 +3,7 @@ package UsersBackend
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	pasproj "github.com/HRMonitorr/PasetoprojectBackend"
 	"github.com/aiteung/atapi"
 	"github.com/gofiber/fiber/v2"
@@ -94,7 +95,7 @@ func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 			dt := &wa.TextMessage{
 				To:       datarole.PhoneNum,
 				IsGroup:  false,
-				Messages: "Hai hai kak \n Ini OTP kakak " + data.OTPCode,
+				Messages: fmt.Sprintf("Hai hai kak \n Ini OTP kakak %s", data.OTPCode),
 			}
 			res, errmsg := atapi.PostStructWithToken[Responses]("Token", os.Getenv("TOKEN"), dt, "https://api.wa.my.id/api/send/message/text")
 			resp.Status = true
