@@ -24,6 +24,11 @@ type Users struct {
 	Role     string `json:"role,omitempty" bson:"role,omitempty"`
 }
 
+type Logindata struct {
+	Username string `json:"username" bson:"username"`
+	Password string `json:"password" bson:"password"`
+}
+
 type ResponseEmployeeBanyak struct {
 	Status  int        `json:"status"`
 	Message string     `json:"message"`

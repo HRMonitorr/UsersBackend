@@ -70,17 +70,20 @@ func Login(Privatekey, MongoEnv, dbname, Colname string, r *http.Request) string
 func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 	var resp pasproj.Credential
 	mconn := pasproj.MongoCreateConnection(MongoEnv, dbname)
-	var datauser Users
+	var datauser Logindata
 	err := json.NewDecoder(r.Body).Decode(&datauser)
 	if err != nil {
 		resp.Message = "error parsing application/json: " + err.Error()
 	} else {
+		datarole := GetOneUser(mconn, "user", Users{Username: datauser.Username})
+		if datarole.Username == "" {
+			resp.Message = "Data User tidak ditemukan nih bestie"
+		}
 		if pasproj.PasswordValidator(mconn, Colname, pasproj.User{
-			Username: datauser.Username,
-			Password: datauser.Password,
-			Role:     datauser.Role,
+			Username: datarole.Username,
+			Password: datarole.Password,
+			Role:     datarole.Role,
 		}) {
-			datarole := GetOneUser(mconn, "user", Users{Username: datauser.Username})
 			data := OTP{
 				Username: datauser.Username,
 				Role:     datarole.Role,
@@ -93,9 +96,9 @@ func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 				IsGroup:  false,
 				Messages: "Hai hai kak \n Ini OTP kakak " + data.OTPCode,
 			}
-			res, _ := atapi.PostStructWithToken[Responses]("Token", os.Getenv("TOKEN"), dt, "https://api.wa.my.id/api/send/message/text")
+			res, errmsg := atapi.PostStructWithToken[Responses]("Token", os.Getenv("TOKEN"), dt, "https://api.wa.my.id/api/send/message/text")
 			resp.Status = true
-			resp.Message = "Hai Silahkan cek WhatsApp untuk OTPnya yaa " + data.OTPCode
+			resp.Message = "Hai Silahkan cek WhatsApp untuk OTPnya yaa " + data.OTPCode + " " + errmsg
 			resp.Token = res.Response
 		} else {
 			resp.Message = "Password Salah"
