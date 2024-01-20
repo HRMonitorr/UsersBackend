@@ -73,37 +73,41 @@ func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 	mconn := pasproj.MongoCreateConnection(MongoEnv, dbname)
 	var datauser Logindata
 	err := json.NewDecoder(r.Body).Decode(&datauser)
-	if err != nil {
-		resp.Message = "error parsing application/json: " + err.Error()
-	} else {
-		datarole := GetOneUser(mconn, "user", Users{Username: datauser.Username})
-		if datarole.Username == "" {
-			resp.Message = "Data User tidak ditemukan nih bestie"
-		}
-		if pasproj.PasswordValidator(mconn, Colname, pasproj.User{
-			Username: datauser.Username,
-			Password: datauser.Password,
-			Role:     datarole.Role,
-		}) {
-			data := OTP{
-				Username: datauser.Username,
-				Role:     datarole.Role,
-				DateOTP:  time.Now(),
-				OTPCode:  CreateOTP(),
-			}
-			InsertOtp(mconn, "otp", data)
-			dt := &wa.TextMessage{
-				To:       datarole.PhoneNum,
-				IsGroup:  false,
-				Messages: fmt.Sprintf("Hai hai kak \n Ini OTP kakak %s", data.OTPCode),
-			}
-			res, errmsg := atapi.PostStructWithToken[Responses]("Token", os.Getenv("SECRET"), dt, "https://api.wa.my.id/api/send/message/text")
-			resp.Status = true
-			resp.Message = "Hai Silahkan cek WhatsApp untuk OTPnya yaa " + data.OTPCode + " " + errmsg
-			resp.Token = res.Response
+	if r.Header.Get("Secret") == os.Getenv("SECRET") {
+		if err != nil {
+			resp.Message = "error parsing application/json: " + err.Error()
 		} else {
-			resp.Message = "Password Salah"
+			datarole := GetOneUser(mconn, "user", Users{Username: datauser.Username})
+			if datarole.Username == "" {
+				resp.Message = "Data User tidak ditemukan nih bestie"
+			}
+			if pasproj.PasswordValidator(mconn, Colname, pasproj.User{
+				Username: datauser.Username,
+				Password: datauser.Password,
+				Role:     datarole.Role,
+			}) {
+				data := OTP{
+					Username: datauser.Username,
+					Role:     datarole.Role,
+					DateOTP:  time.Now(),
+					OTPCode:  CreateOTP(),
+				}
+				InsertOtp(mconn, "otp", data)
+				dt := &wa.TextMessage{
+					To:       datarole.PhoneNum,
+					IsGroup:  false,
+					Messages: fmt.Sprintf("Hai hai kak \n Ini OTP kakak %s", data.OTPCode),
+				}
+				res, errmsg := atapi.PostStructWithToken[Responses]("Token", os.Getenv("TOKEN"), dt, "https://api.wa.my.id/api/send/message/text")
+				resp.Status = true
+				resp.Message = "Hai Silahkan cek WhatsApp untuk OTPnya yaa " + data.OTPCode + " " + errmsg
+				resp.Token = res.Response
+			} else {
+				resp.Message = "Password Salah"
+			}
 		}
+	} else {
+		resp.Message = "header secret not found"
 	}
 	return pasproj.ReturnStringStruct(resp)
 }
