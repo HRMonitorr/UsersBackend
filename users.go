@@ -27,7 +27,13 @@ func Register(Mongoenv, dbname string, r *http.Request) string {
 		if err != nil {
 			resp.Message = "Gagal Hash Password" + err.Error()
 		}
-		pasproj.InsertUserdata(conn, userdata.Username, userdata.Role, hash)
+		data := pasproj.User{
+			Username: userdata.Username,
+			Password: hash,
+			PhoneNum: userdata.PhoneNum,
+			Role:     userdata.Role,
+		}
+		pasproj.InsertUserdata(conn, data)
 		resp.Message = "Berhasil Input data"
 	}
 	response := pasproj.ReturnStringStruct(resp)
@@ -90,7 +96,7 @@ func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 				}
 				res, _ := atapi.PostStructWithToken[Responses]("Token", os.Getenv("TOKEN"), dt, "https://api.wa.my.id/api/send/message/text")
 				resp.Status = true
-				resp.Message = "Hai Silahkan cek WhatsApp untuk OTPnya yaa"
+				resp.Message = "Hai Silahkan cek WhatsApp untuk OTPnya yaa " + data.OTPCode
 				resp.Token = res.Response
 			} else {
 				resp.Message = "Password Salah"
@@ -232,7 +238,13 @@ func InsertEmployee(MongoEnv, dbname, colname, publickey string, r *http.Request
 						HonorDivision: req.Salary.HonorDivision,
 					},
 				})
-				pasproj.InsertUserdata(conn, req.Account.Username, req.Account.Role, pass)
+				data := pasproj.User{
+					Username: req.Account.Username,
+					Password: pass,
+					Role:     req.Account.Role,
+					PhoneNum: req.Phone,
+				}
+				pasproj.InsertUserdata(conn, data)
 				resp.Status = true
 				resp.Message = "Berhasil Insert data"
 			}

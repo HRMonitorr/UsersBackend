@@ -5,10 +5,10 @@ go 1.21.3
 toolchain go1.21.4
 
 require (
-	github.com/HRMonitorr/PasetoprojectBackend v0.0.11
-	github.com/aiteung/atdb v0.1.3
+	github.com/HRMonitorr/PasetoprojectBackend v0.1.1
+	github.com/aiteung/atdb v0.1.5
 	github.com/gofiber/fiber/v2 v2.50.0
-	go.mongodb.org/mongo-driver v1.13.0
+	go.mongodb.org/mongo-driver v1.13.1
 )
 
 require (
@@ -43,7 +43,7 @@ require (
 	github.com/valyala/fasthttp v1.50.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/whatsauth/wa v0.3.7 // indirect
-	github.com/whatsauth/watoken v0.1.3 // indirect
+	github.com/whatsauth/watoken v0.1.6 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
@@ -51,10 +51,10 @@ require (
 	go.mau.fi/libsignal v0.1.0 // indirect
 	go.mau.fi/util v0.2.1 // indirect
 	go.mau.fi/whatsmeow v0.0.0-20231127175850-3c97433b4676 // indirect
-	golang.org/x/crypto v0.16.0 // indirect
+	golang.org/x/crypto v0.18.0 // indirect
 	golang.org/x/net v0.19.0 // indirect
-	golang.org/x/sync v0.5.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/sync v0.6.0 // indirect
+	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 )
