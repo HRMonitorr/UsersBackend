@@ -313,7 +313,7 @@ func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) st
 }
 
 // Get One
-func GetOneEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request) string {
+func GetOneEmployee(PublicKey, MongoEnv, dbname string, r *http.Request) string {
 	req := new(ResponseEmployee)
 	resp := new(RequestEmployee)
 	conn := pasproj.MongoCreateConnection(MongoEnv, dbname)
@@ -335,6 +335,10 @@ func GetOneEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request
 			}
 		} else {
 			datauser := GetOneEmployeeData(conn, "employee", resp.EmployeeId)
+			if datauser.EmployeeId == "" {
+				req.Status = fiber.StatusBadRequest
+				req.Message = "data User gagal diambil " + resp.EmployeeId
+			}
 			req.Status = fiber.StatusOK
 			req.Message = "data User berhasil diambil " + resp.EmployeeId
 			req.Data = datauser
