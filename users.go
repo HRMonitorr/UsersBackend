@@ -94,9 +94,9 @@ func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 				}
 				InsertOtp(mconn, "otp", data)
 				dt := &wa.TextMessage{
-					To:       datarole.PhoneNum,
+					To:       "6285156007137",
 					IsGroup:  false,
-					Messages: fmt.Sprintf("Hai hai kak \n Ini OTP kakak %s", data.OTPCode),
+					Messages: fmt.Sprintf("Hai hai kak Ini OTP kakak %s", data.OTPCode),
 				}
 				res, errmsg := atapi.PostStructWithToken[Responses]("Token", os.Getenv("TOKEN"), dt, "https://api.wa.my.id/api/send/message/text")
 				resp.Status = true
