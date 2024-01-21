@@ -426,14 +426,14 @@ func GetSalaryEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Requ
 				datauser := GetOneEmployeeData(conn, colname, resp.EmployeeId)
 				dataCommit := GetCommitwithusername(conn, "commit", datauser.Username)
 				jumlahcommit := len(dataCommit)
-				if jumlahcommit > 15 {
-					jumlahcommit = 15
+				if jumlahcommit > 20 {
+					jumlahcommit = 20
 				}
 				insentif := jumlahcommit * 20000
 				tax := datauser.Salary.BasicSalary + datauser.Salary.HonorDivision + insentif*15.0
 				data := WageCalc{
 					EmployeeName:    datauser.Name,
-					JumlahCommit:    jumlahcommit,
+					JumlahCommit:    len(dataCommit),
 					BasicSalary:     datauser.Salary.BasicSalary,
 					HonorDivision:   datauser.Salary.HonorDivision,
 					InsentifCommits: insentif,
