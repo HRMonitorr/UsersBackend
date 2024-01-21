@@ -440,6 +440,7 @@ func GetSalaryEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Requ
 					GrossSalary:     datauser.Salary.BasicSalary + datauser.Salary.HonorDivision + insentif,
 					Tax:             tax,
 					NettSalary:      datauser.Salary.BasicSalary + datauser.Salary.HonorDivision + insentif - tax,
+					Month:           time.Now().Month().String(),
 				}
 
 				wagedata := GetWgebyMonth(conn, time.Now().Month().String(), datauser.Name)
