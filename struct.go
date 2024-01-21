@@ -83,3 +83,7 @@ type OTP struct {
 	DateOTP  time.Time `json:"date-otp" bson:"date-otp"`
 	OTPCode  string    `bson:"otp-code" json:"otp-code"`
 }
+
+type OnlyOTP struct {
+	OTPCode string `bson:"otp-code" json:"otp-code"`
+}

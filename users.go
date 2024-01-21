@@ -94,7 +94,7 @@ func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 				}
 				InsertOtp(mconn, "otp", data)
 				dt := &wa.TextMessage{
-					To:       "6285156007137",
+					To:       datarole.PhoneNum,
 					IsGroup:  false,
 					Messages: fmt.Sprintf("Hai hai kak Ini OTP kakak %s", data.OTPCode),
 				}
@@ -108,6 +108,33 @@ func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 		}
 	} else {
 		resp.Message = "header secret not found"
+	}
+	return pasproj.ReturnStringStruct(resp)
+}
+
+func LoginAfterOTP(Privatekey, MongoEnv, dbname, Colname string, r *http.Request) string {
+	var resp pasproj.Credential
+	mconn := pasproj.MongoCreateConnection(MongoEnv, dbname)
+	var datauser OnlyOTP
+	err := json.NewDecoder(r.Body).Decode(&datauser)
+	if err != nil {
+		resp.Message = "error parsing application/json: " + err.Error()
+	} else {
+		if GetOtpExists(mconn, "otp", datauser.OTPCode) {
+			dataOTP := GetOtp(mconn, "otp", datauser.OTPCode)
+			datarole := pasproj.GetOneUser(mconn, "user", pasproj.User{Username: dataOTP.Username})
+			tokenstring, err := pasproj.EncodeWithRole(datarole.Role, dataOTP.Username, os.Getenv(Privatekey))
+			if err != nil {
+				resp.Message = "Gagal Encode Token : " + err.Error()
+			} else {
+				DeleteOTP(mconn, "otp", dataOTP.OTPCode)
+				resp.Status = true
+				resp.Message = "Berhasil Login, Selamat datangg"
+				resp.Token = tokenstring
+			}
+		} else {
+			resp.Message = "OTP Salah"
+		}
 	}
 	return pasproj.ReturnStringStruct(resp)
 }

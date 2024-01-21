@@ -77,9 +77,24 @@ func InsertOtp(MongoConn *mongo.Database, colname string, otp OTP) (InsertedID i
 	return pasproj.InsertOneDoc(MongoConn, colname, otp)
 }
 
-func GetOtp(mongoconn *mongo.Database, colname, otp string) (dest Employee) {
+func GetOtp(mongoconn *mongo.Database, colname, otp string) (dest OTP) {
 	filter := bson.M{"otp-code": otp}
-	dest = atdb.GetOneDoc[Employee](mongoconn, colname, filter)
+	dest = atdb.GetOneDoc[OTP](mongoconn, colname, filter)
+	return
+}
+
+func GetOtpExists(mongoconn *mongo.Database, colname, otp string) (exists bool) {
+	var dest OTP
+	dest = GetOtp(mongoconn, colname, otp)
+	if dest.OTPCode == "" {
+		return false
+	}
+	return true
+}
+
+func DeleteOTP(mcon *mongo.Database, colname, otp string) (deletedid *mongo.DeleteResult) {
+	filter := bson.M{"otp-code": otp}
+	deletedid = atdb.DeleteOneDoc(mcon, colname, filter)
 	return
 }
 
