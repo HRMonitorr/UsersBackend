@@ -94,7 +94,7 @@ func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 				}
 				InsertOtp(mconn, "otp", data)
 				dt := &wa.TextMessage{
-					To:       "6285156007137",
+					To:       datarole.PhoneNum,
 					IsGroup:  false,
 					Messages: fmt.Sprintf("Hai hai kak Ini OTP kakak %s", data.OTPCode),
 				}

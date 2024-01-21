@@ -20,7 +20,7 @@ type ResponseEmployee struct {
 type Users struct {
 	Username string `json:"username" bson:"username"`
 	Password string `json:"password" bson:"password"`
-	PhoneNum string `json:"phone-num" bson:"phone-num"`
+	PhoneNum string `json:"phone-num" bson:"phoneNum"`
 	Role     string `json:"role,omitempty" bson:"role,omitempty"`
 }
 
