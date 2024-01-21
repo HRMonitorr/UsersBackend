@@ -438,16 +438,16 @@ func GetSalaryEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Requ
 					jumlahcommit = 20
 				}
 				insentif := jumlahcommit * 20000
-				tax := datauser.Salary.BasicSalary + datauser.Salary.HonorDivision + insentif*15.0
+				tax := float64(datauser.Salary.BasicSalary+datauser.Salary.HonorDivision+insentif) * 0.15
 				data := WageCalc{
 					EmployeeName:    datauser.Name,
-					JumlahCommit:    len(dataCommit),
-					BasicSalary:     datauser.Salary.BasicSalary,
-					HonorDivision:   datauser.Salary.HonorDivision,
-					InsentifCommits: insentif,
-					GrossSalary:     datauser.Salary.BasicSalary + datauser.Salary.HonorDivision + insentif,
+					JumlahCommit:    float64(len(dataCommit)),
+					BasicSalary:     float64(datauser.Salary.BasicSalary),
+					HonorDivision:   float64(datauser.Salary.HonorDivision),
+					InsentifCommits: float64(insentif),
+					GrossSalary:     float64(datauser.Salary.BasicSalary + datauser.Salary.HonorDivision + insentif),
 					Tax:             tax,
-					NettSalary:      datauser.Salary.BasicSalary + datauser.Salary.HonorDivision + insentif - tax,
+					NettSalary:      float64(datauser.Salary.BasicSalary+datauser.Salary.HonorDivision+insentif) - tax,
 					Month:           time.Now().Month().String(),
 				}
 
