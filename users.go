@@ -205,22 +205,22 @@ func DeleteUserforAdmin(Mongoenv, publickey, dbname, colname string, r *http.Req
 		resp.Status = fiber.StatusBadRequest
 		resp.Message = "Token login tidak ada"
 	} else {
-		checkadmin := IsAdmin(tokenlogin, os.Getenv(publickey))
-		if !checkadmin {
-			resp.Status = fiber.StatusInternalServerError
-			resp.Message = "kamu bukan admin"
-		} else {
-			del, err := DeleteUser(conn, "user", req.Username)
-			if del == 0 {
-				resp.Status = fiber.StatusBadRequest
-				resp.Message = "gagal hapus data"
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			resp.Message = "error parsing application/json: " + err.Error()
+			checkadmin := IsAdmin(tokenlogin, os.Getenv(publickey))
+			if !checkadmin {
+				resp.Status = fiber.StatusInternalServerError
+				resp.Message = "kamu bukan admin"
+			} else {
+				_, err := DeleteUser(conn, colname, req.Username)
+				if err != nil {
+					resp.Status = fiber.StatusBadRequest
+					resp.Message = "gagal hapus data"
+				}
+				resp.Status = fiber.StatusOK
+				resp.Message = "data berhasil dihapus"
 			}
-			if err != nil {
-				resp.Status = fiber.StatusBadRequest
-				resp.Message = "gagal hapus data"
-			}
-			resp.Status = fiber.StatusOK
-			resp.Message = "data berhasil dihapus " + req.Username
 		}
 	}
 	return pasproj.ReturnStringStruct(resp)
