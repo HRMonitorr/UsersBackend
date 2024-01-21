@@ -459,3 +459,28 @@ func GetSalaryEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Requ
 	}
 	return pasproj.ReturnStringStruct(req)
 }
+
+func GetSalaryAll(PublicKey, MongoEnv, dbname, colname string, r *http.Request) string {
+	req := new(structure.Creds)
+	conn := pasproj.MongoCreateConnection(MongoEnv, dbname)
+	tokenlogin := r.Header.Get("Login")
+	if tokenlogin == "" {
+		req.Status = fiber.StatusBadRequest
+		req.Message = "Header Login Not Found"
+	} else {
+		checkadmin := IsAdmin(tokenlogin, os.Getenv(PublicKey))
+		if !checkadmin {
+			checkHR := IsHR(tokenlogin, os.Getenv(PublicKey))
+			if !checkHR {
+				req.Status = fiber.StatusBadRequest
+				req.Message = "Anda tidak bisa Get data karena bukan HR atau admin"
+			}
+		} else {
+			data := GetWgeAll(conn)
+			req.Status = fiber.StatusOK
+			req.Message = "data wage berhasil diinput"
+			req.Data = data
+		}
+	}
+	return pasproj.ReturnStringStruct(req)
+}

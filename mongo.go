@@ -120,3 +120,8 @@ func GetWgebyMonth(MongoConn *mongo.Database, month, name string) bool {
 	}
 	return true
 }
+
+func GetWgeAll(MongoConn *mongo.Database) []WageCalc {
+	data := atdb.GetAllDoc[[]WageCalc](MongoConn, "wage")
+	return data
+}
