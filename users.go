@@ -422,7 +422,17 @@ func GetSalaryEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Requ
 				}
 			} else {
 				datauser := GetOneEmployeeData(conn, colname, resp.EmployeeId)
+				if datauser.EmployeeId == "" {
+					req.Status = fiber.StatusBadRequest
+					req.Message = "data user tidak ada"
+				}
 				dataCommit := GetCommitwithusername(conn, "commit", datauser.Username)
+				if len(dataCommit) == 0 {
+					if datauser.EmployeeId == "" {
+						req.Status = fiber.StatusBadRequest
+						req.Message = "data commit 0 "
+					}
+				}
 				jumlahcommit := len(dataCommit)
 				if jumlahcommit > 20 {
 					jumlahcommit = 20
