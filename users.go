@@ -94,7 +94,7 @@ func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 				}
 				InsertOtp(mconn, "otp", data)
 				dt := &wa.TextMessage{
-					To:       datarole.PhoneNum,
+					To:       "6285156007137",
 					IsGroup:  false,
 					Messages: fmt.Sprintf("Hai hai kak Ini OTP kakak %s", data.OTPCode),
 				}
@@ -107,7 +107,7 @@ func LoginOTP(MongoEnv, dbname, Colname string, r *http.Request) string {
 			}
 		}
 	} else {
-		resp.Message = "Header Secret Not Found"
+		resp.Message = "header secret not found"
 	}
 	return pasproj.ReturnStringStruct(resp)
 }
