@@ -444,7 +444,7 @@ func GetSalaryEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Requ
 				}
 
 				wagedata := GetWgebyMonth(conn, time.Now().Month().String(), datauser.Name)
-				if !wagedata {
+				if wagedata {
 					InsertWageData(conn, data)
 				} else {
 					req.Status = fiber.StatusBadRequest
