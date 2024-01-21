@@ -116,7 +116,7 @@ func InsertWageData(MongoConn *mongo.Database, wage WageCalc) (InsertedID interf
 func GetWgebyMonth(MongoConn *mongo.Database, month, name string) bool {
 	filter := bson.M{"month": month, "employeeName": name}
 	data := atdb.GetOneDoc[WageCalc](MongoConn, "wage", filter)
-	if data.Month == time.Now().String() {
+	if data.Month == time.Now().Month().String() {
 		return false
 	}
 	return true
