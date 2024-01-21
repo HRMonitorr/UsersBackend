@@ -334,7 +334,7 @@ func GetOneEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request
 				req.Message = "Anda tidak bisa Get data karena bukan HR atau admin"
 			}
 		} else {
-			datauser := GetOneEmployeeData(conn, colname, resp.EmployeeId)
+			datauser := GetOneEmployeeData(conn, "employee", resp.EmployeeId)
 			req.Status = fiber.StatusOK
 			req.Message = "data User berhasil diambil " + resp.EmployeeId
 			req.Data = datauser
@@ -421,7 +421,7 @@ func GetSalaryEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Requ
 					req.Message = "Anda tidak bisa Get data karena bukan HR atau admin"
 				}
 			} else {
-				datauser := GetOneEmployeeData(conn, colname, resp.EmployeeId)
+				datauser := GetOneEmployeeData(conn, "employee", resp.EmployeeId)
 				if datauser.EmployeeId == "" {
 					req.Status = fiber.StatusBadRequest
 					req.Message = "data user tidak ada"
