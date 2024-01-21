@@ -18,14 +18,7 @@ func MongoCreateConnection(MongoString, dbname string) *mongo.Database {
 }
 
 func InsertDataEmployee(MongoConn *mongo.Database, colname string, emp Employee) (InsertedID interface{}) {
-	req := new(Employee)
-	req.EmployeeId = emp.EmployeeId
-	req.Name = emp.Name
-	req.Email = emp.Email
-	req.Phone = emp.Phone
-	req.Division = emp.Division
-	req.Account = emp.Account
-	return pasproj.InsertOneDoc(MongoConn, colname, req)
+	return pasproj.InsertOneDoc(MongoConn, colname, emp)
 }
 
 func GetAllEmployeeData(Mongoconn *mongo.Database, colname string) []Employee {

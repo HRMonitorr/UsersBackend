@@ -243,37 +243,21 @@ func InsertEmployee(MongoEnv, dbname, colname, publickey string, r *http.Request
 			if err != nil {
 				resp.Message = "error parsing application/json: " + err.Error()
 			} else {
-				pass, err := pasproj.HashPass(req.Account.Password)
-				if err != nil {
-					resp.Status = false
-					resp.Message = "Gagal Hash Code"
-				}
 				InsertDataEmployee(conn, colname, Employee{
 					EmployeeId: req.EmployeeId,
 					Name:       req.Name,
 					Email:      req.Email,
+					Username:   req.Username,
 					Phone:      req.Phone,
 					Division: Division{
 						DivId:   req.Division.DivId,
 						DivName: req.Division.DivName,
-					},
-					Account: pasproj.User{
-						Username: req.Account.Username,
-						Password: pass,
-						Role:     req.Account.Role,
 					},
 					Salary: Salary{
 						BasicSalary:   req.Salary.BasicSalary,
 						HonorDivision: req.Salary.HonorDivision,
 					},
 				})
-				data := pasproj.User{
-					Username: req.Account.Username,
-					Password: pass,
-					Role:     req.Account.Role,
-					PhoneNum: req.Phone,
-				}
-				pasproj.InsertUserdata(conn, data)
 				resp.Status = true
 				resp.Message = "Berhasil Insert data"
 			}
@@ -308,15 +292,11 @@ func UpdateDataEmployees(MongoEnv, dbname, publickey string, r *http.Request) st
 					EmployeeId: resp.EmployeeId,
 					Name:       resp.Name,
 					Email:      resp.Email,
+					Username:   resp.Username,
 					Phone:      resp.Phone,
 					Division: Division{
 						DivId:   resp.Division.DivId,
 						DivName: resp.Division.DivName,
-					},
-					Account: pasproj.User{
-						Username: resp.Account.Username,
-						Password: resp.Account.Password,
-						Role:     resp.Account.Role,
 					},
 					Salary: Salary{
 						BasicSalary:   resp.Salary.BasicSalary,

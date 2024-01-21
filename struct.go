@@ -1,7 +1,6 @@
 package UsersBackend
 
 import (
-	pasproj "github.com/HRMonitorr/PasetoprojectBackend"
 	"time"
 )
 
@@ -36,13 +35,13 @@ type ResponseEmployeeBanyak struct {
 }
 
 type Employee struct {
-	EmployeeId string       `json:"employeeid" bson:"employeeid,omitempty"`
-	Name       string       `json:"name" bson:"name,omitempty"`
-	Email      string       `json:"email" bson:"email,omitempty"`
-	Phone      string       `json:"phone" bson:"phone,omitempty"`
-	Division   Division     `json:"division" bson:"division,omitempty"`
-	Account    pasproj.User `json:"account" bson:"account,omitempty"`
-	Salary     Salary       `json:"salary" bson:"salary"`
+	EmployeeId string   `json:"employeeid" bson:"employeeid,omitempty"`
+	Name       string   `json:"name" bson:"name,omitempty"`
+	Username   string   `json:"username" bson:"username"`
+	Email      string   `json:"email" bson:"email,omitempty"`
+	Phone      string   `json:"phone" bson:"phone,omitempty"`
+	Division   Division `json:"division" bson:"division,omitempty"`
+	Salary     Salary   `json:"salary" bson:"salary"`
 }
 
 type Division struct {
@@ -86,4 +85,8 @@ type OTP struct {
 
 type OnlyOTP struct {
 	OTPCode string `bson:"otp-code" json:"otp-code"`
+}
+
+type WageCalc struct {
+	EmployeeName string `bson:"employeeName" json:"employeeName"`
 }
