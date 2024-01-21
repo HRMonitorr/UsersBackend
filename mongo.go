@@ -7,6 +7,7 @@ import (
 	"github.com/aiteung/atdb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 func MongoCreateConnection(MongoString, dbname string) *mongo.Database {
@@ -114,8 +115,8 @@ func InsertWageData(MongoConn *mongo.Database, wage WageCalc) (InsertedID interf
 
 func GetWgebyMonth(MongoConn *mongo.Database, month, name string) bool {
 	filter := bson.M{"month": month, "employeeName": name}
-	data := atdb.GetOneDoc[Users](MongoConn, "wage", filter)
-	if data.Username == "" {
+	data := atdb.GetOneDoc[WageCalc](MongoConn, "wage", filter)
+	if data.Month == time.Now().String() {
 		return false
 	}
 	return true
