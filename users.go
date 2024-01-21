@@ -448,11 +448,11 @@ func GetSalaryEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Requ
 					InsertWageData(conn, data)
 				} else {
 					req.Status = fiber.StatusBadRequest
-					req.Message = "Data wage untuk bulan ini sudah ada " + datauser.Name
+					req.Message = "Data wage untuk bulan ini sudah ada " + resp.EmployeeId
 				}
 
 				req.Status = fiber.StatusOK
-				req.Message = "data wage berhasil diinput"
+				req.Message = "data wage berhasil diinput " + datauser.Username + " " + resp.EmployeeId
 				req.Data = data
 			}
 		}
