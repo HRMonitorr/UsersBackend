@@ -3,6 +3,7 @@ package UsersBackend
 import (
 	"context"
 	pasproj "github.com/HRMonitorr/PasetoprojectBackend"
+	"github.com/HRMonitorr/monitoring-backend/structure"
 	"github.com/aiteung/atdb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -99,4 +100,23 @@ func GetOneUser(MongoConn *mongo.Database, colname string, userdata Users) Users
 	filter := bson.M{"username": userdata.Username}
 	data := atdb.GetOneDoc[Users](MongoConn, colname, filter)
 	return data
+}
+
+func GetCommitwithusername(MongoConn *mongo.Database, colname, username string) (dest []structure.Commits) {
+	filter := bson.M{"author": username}
+	dest = atdb.GetAllDocByFilter[[]structure.Commits](MongoConn, colname, filter)
+	return
+}
+
+func InsertWageData(MongoConn *mongo.Database, wage WageCalc) (InsertedID interface{}) {
+	return pasproj.InsertOneDoc(MongoConn, "wage", wage)
+}
+
+func GetWgebyMonth(MongoConn *mongo.Database, month, name string) bool {
+	filter := bson.M{"month": month, "employeeName": name}
+	data := atdb.GetOneDoc[Users](MongoConn, "wage", filter)
+	if data.Username == "" {
+		return false
+	}
+	return true
 }

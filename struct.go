@@ -88,5 +88,13 @@ type OnlyOTP struct {
 }
 
 type WageCalc struct {
-	EmployeeName string `bson:"employeeName" json:"employeeName"`
+	EmployeeName    string `bson:"employeeName" json:"employeeName"`
+	JumlahCommit    int    `bson:"jumlahCommit" json:"jumlahCommit"`
+	BasicSalary     int    `bson:"basicSalary" json:"basicSalary"`
+	HonorDivision   int    `bson:"honorDivision" json:"honorDivision"`
+	InsentifCommits int    `json:"insentifCommits" bson:"insentifCommits"`
+	GrossSalary     int    `bson:"jumlahKotor" json:"jumlahKotor"`
+	Tax             int    `json:"tax" bson:"tax"`
+	NettSalary      int    `bson:"nettSalary" json:"nettSalary"`
+	Month           string `json:"month" bson:"month"`
 }

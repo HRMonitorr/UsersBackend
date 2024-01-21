@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	pasproj "github.com/HRMonitorr/PasetoprojectBackend"
+	"github.com/HRMonitorr/monitoring-backend/structure"
 	"github.com/aiteung/atapi"
 	"github.com/gofiber/fiber/v2"
 	"github.com/whatsauth/wa"
@@ -399,4 +400,61 @@ func DeleteEmployee(Mongoenv, publickey, dbname, colname string, r *http.Request
 		}
 	}
 	return pasproj.ReturnStringStruct(resp)
+}
+
+func GetSalaryEmployee(PublicKey, MongoEnv, dbname, colname string, r *http.Request) string {
+	req := new(structure.Creds)
+	resp := new(RequestEmployee)
+	conn := pasproj.MongoCreateConnection(MongoEnv, dbname)
+	tokenlogin := r.Header.Get("Login")
+	if tokenlogin == "" {
+		req.Status = fiber.StatusBadRequest
+		req.Message = "Header Login Not Found"
+	} else {
+		err := json.NewDecoder(r.Body).Decode(&resp)
+		if err != nil {
+			req.Message = "error parsing application/json: " + err.Error()
+		} else {
+			checkadmin := IsAdmin(tokenlogin, os.Getenv(PublicKey))
+			if !checkadmin {
+				checkHR := IsHR(tokenlogin, os.Getenv(PublicKey))
+				if !checkHR {
+					req.Status = fiber.StatusBadRequest
+					req.Message = "Anda tidak bisa Get data karena bukan HR atau admin"
+				}
+			} else {
+				datauser := GetOneEmployeeData(conn, colname, resp.EmployeeId)
+				dataCommit := GetCommitwithusername(conn, "commit", datauser.Username)
+				jumlahcommit := len(dataCommit)
+				if jumlahcommit > 15 {
+					jumlahcommit = 15
+				}
+				insentif := jumlahcommit * 20000
+				tax := datauser.Salary.BasicSalary + datauser.Salary.HonorDivision + insentif*15.0
+				data := WageCalc{
+					EmployeeName:    datauser.Name,
+					JumlahCommit:    jumlahcommit,
+					BasicSalary:     datauser.Salary.BasicSalary,
+					HonorDivision:   datauser.Salary.HonorDivision,
+					InsentifCommits: insentif,
+					GrossSalary:     datauser.Salary.BasicSalary + datauser.Salary.HonorDivision + insentif,
+					Tax:             tax,
+					NettSalary:      datauser.Salary.BasicSalary + datauser.Salary.HonorDivision + insentif - tax,
+				}
+
+				wagedata := GetWgebyMonth(conn, time.Now().Month().String(), datauser.Name)
+				if !wagedata {
+					InsertWageData(conn, data)
+				} else {
+					req.Status = fiber.StatusBadRequest
+					req.Message = "Data wage untuk bulan ini sudah ada"
+				}
+
+				req.Status = fiber.StatusOK
+				req.Message = "data wage berhasil diinput"
+				req.Data = data
+			}
+		}
+	}
+	return pasproj.ReturnStringStruct(req)
 }
